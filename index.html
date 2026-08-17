@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AJ Calculator</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+    <div class="background">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+    
+    <main class="container">
+        <header>
+            <div style="display: flex; justify-content: center; margin-bottom: 1rem;">
+                <i class="ph-fill ph-calculator" style="font-size: 3rem; color: var(--accent);"></i>
+            </div>
+            <h1>AJ Calculator</h1>
+            <p>Descubra o valor exato para cobrar do seu cliente.</p>
+        </header>
+
+        <section class="calculator">
+            <div class="input-group">
+                <label for="net-value">Valor Líquido Desejado (R$)</label>
+                <div class="input-wrapper">
+                    <span class="currency-symbol">R$</span>
+                    <input type="text" id="net-value" placeholder="0,00" inputmode="numeric">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="input-group">
+                    <label for="platform">Plataforma</label>
+                    <div class="custom-select">
+                        <select id="platform">
+                            <option value="payup">Payup</option>
+                            <option value="uoppay">UOPPAY</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="method">Método de Pagamento</label>
+                    <div class="custom-select">
+                        <select id="method">
+                            <option value="pix">Pix</option>
+                            <option value="credit">Cartão de Crédito</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" id="credit-options" style="display: none;">
+                <div class="input-group" id="brand-group">
+                    <label for="brand">Bandeira</label>
+                    <div class="custom-select">
+                        <select id="brand">
+                            <option value="visa">Visa</option>
+                            <option value="master">Mastercard</option>
+                            <option value="elo">Elo</option>
+                            <option value="hipercard">Hipercard</option>
+                            <option value="amex">Amex</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="installments">Parcelas</label>
+                    <div class="custom-select">
+                        <select id="installments">
+                            <!-- Options populated by JS -->
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group checkbox-group" id="uoppay-fee-group" style="display: none;">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="uoppay-fee" checked>
+                    <span class="custom-checkbox"></span>
+                    Incluir Tarifa de Processamento (R$ 1,00)
+                </label>
+            </div>
+
+            <div class="input-group" style="margin-top: 1rem;">
+                <label for="extra-fee">Taxa Extra / Acréscimo (%) - Opcional</label>
+                <div class="input-wrapper">
+                    <span class="currency-symbol">%</span>
+                    <input type="number" id="extra-fee" placeholder="0" min="0" step="0.01" style="padding-left: 3rem;">
+                </div>
+            </div>
+
+            <div class="results">
+                <div class="result-card primary">
+                    <h3>Valor a Cobrar</h3>
+                    <div class="amount" id="charge-amount">R$ 0,00</div>
+                    <p class="subtitle">Passe este valor para o cliente</p>
+                </div>
+                
+                <div class="result-details">
+                    <div class="detail">
+                        <span>Taxa Descontada (<span id="fee-percent">0%</span>)</span>
+                        <strong class="text-danger" id="fee-amount">- R$ 0,00</strong>
+                    </div>
+                    <div class="detail">
+                        <span>Você Recebe</span>
+                        <strong class="text-success" id="net-result">R$ 0,00</strong>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="taxas.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
