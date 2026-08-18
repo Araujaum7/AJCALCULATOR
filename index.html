@@ -24,11 +24,21 @@
         </header>
 
         <section class="calculator">
+            <div class="input-group" style="margin-bottom: 0.5rem;">
+                <label for="calc-mode">Tipo de Cálculo</label>
+                <div class="custom-select">
+                    <select id="calc-mode">
+                        <option value="normal">Calcular valor para cobrar (Padrão)</option>
+                        <option value="inverse">Calcular valor líquido de uma venda (Inverso)</option>
+                    </select>
+                </div>
+            </div>
+
             <div class="input-group">
-                <label for="net-value">Valor Líquido Desejado (R$)</label>
+                <label for="main-value" id="main-value-label">Valor Líquido Desejado (R$)</label>
                 <div class="input-wrapper">
                     <span class="currency-symbol">R$</span>
-                    <input type="text" id="net-value" placeholder="0,00" inputmode="numeric">
+                    <input type="text" id="main-value" placeholder="0,00" inputmode="numeric">
                 </div>
             </div>
 
@@ -96,9 +106,9 @@
 
             <div class="results">
                 <div class="result-card primary">
-                    <h3>Valor a Cobrar</h3>
-                    <div class="amount" id="charge-amount">R$ 0,00</div>
-                    <p class="subtitle">Passe este valor para o cliente</p>
+                    <h3 id="result-primary-title">Valor a Cobrar</h3>
+                    <div class="amount" id="result-primary-amount">R$ 0,00</div>
+                    <p class="subtitle" id="result-primary-subtitle">Passe este valor para o cliente</p>
                 </div>
                 
                 <div class="result-details">
@@ -107,8 +117,8 @@
                         <strong class="text-danger" id="fee-amount">- R$ 0,00</strong>
                     </div>
                     <div class="detail">
-                        <span>Você Recebe</span>
-                        <strong class="text-success" id="net-result">R$ 0,00</strong>
+                        <span id="result-secondary-title">Você Recebe</span>
+                        <strong class="text-success" id="result-secondary-amount">R$ 0,00</strong>
                     </div>
                 </div>
             </div>

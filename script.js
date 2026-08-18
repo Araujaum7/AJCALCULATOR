@@ -1,6 +1,8 @@
 // As taxas agora são importadas dinamicamente do arquivo taxas.js
 const rates = CONFIGURACAO_TAXAS;
-const elNetValue = document.getElementById('net-value');
+const elCalcMode = document.getElementById('calc-mode');
+const elMainValue = document.getElementById('main-value');
+const elMainValueLabel = document.getElementById('main-value-label');
 const elPlatform = document.getElementById('platform');
 const elMethod = document.getElementById('method');
 const elCreditOptions = document.getElementById('credit-options');
@@ -11,13 +13,17 @@ const elUoppayFeeGroup = document.getElementById('uoppay-fee-group');
 const elUoppayFee = document.getElementById('uoppay-fee');
 const elExtraFee = document.getElementById('extra-fee');
 
-const elChargeAmount = document.getElementById('charge-amount');
+const elPrimaryTitle = document.getElementById('result-primary-title');
+const elPrimaryAmount = document.getElementById('result-primary-amount');
+const elPrimarySubtitle = document.getElementById('result-primary-subtitle');
 const elFeeAmount = document.getElementById('fee-amount');
 const elFeePercent = document.getElementById('fee-percent');
-const elNetResult = document.getElementById('net-result');
+const elSecondaryTitle = document.getElementById('result-secondary-title');
+const elSecondaryAmount = document.getElementById('result-secondary-amount');
 
 // Initialize formatting and listeners
-elNetValue.addEventListener('input', handleCurrencyInput);
+elCalcMode.addEventListener('change', () => { updateMode(); calculate(); });
+elMainValue.addEventListener('input', handleCurrencyInput);
 elPlatform.addEventListener('change', updateFormState);
 elMethod.addEventListener('change', updateFormState);
 elBrand.addEventListener('change', calculate);
@@ -47,6 +53,21 @@ function formatCurrency(value) {
         style: 'currency',
         currency: 'BRL'
     }).format(value);
+}
+
+function updateMode() {
+    const mode = elCalcMode.value;
+    if (mode === 'normal') {
+        elMainValueLabel.textContent = 'Valor Líquido Desejado (R$)';
+        elPrimaryTitle.textContent = 'Valor a Cobrar';
+        elPrimarySubtitle.textContent = 'Passe este valor para o cliente';
+        elSecondaryTitle.textContent = 'Você Recebe';
+    } else {
+        elMainValueLabel.textContent = 'Valor Cobrado do Cliente (R$)';
+        elPrimaryTitle.textContent = 'Valor Líquido';
+        elPrimarySubtitle.textContent = 'Valor que cai na sua conta';
+        elSecondaryTitle.textContent = 'Valor Cobrado';
+    }
 }
 
 function updateFormState() {
@@ -108,16 +129,17 @@ function populateInstallments() {
 }
 
 function calculate() {
-    const netValueStr = elNetValue.value;
-    const netValue = getNumericValue(netValueStr);
+    const mainValueStr = elMainValue.value;
+    const mainValue = getNumericValue(mainValueStr);
     
-    if (netValue === 0) {
+    if (mainValue === 0) {
         resetResults();
         return;
     }
     
     const platform = elPlatform.value;
     const method = elMethod.value;
+    const mode = elCalcMode.value;
     
     let percentRate = 0;
     let fixedRate = 0;
@@ -148,15 +170,30 @@ function calculate() {
     
     const totalPercentRate = percentRate + extraFeePercent;
     
-    // Formula: Valor a Cobrar = (Valor Líquido + Taxa Fixa) / (1 - Taxa Percentual / 100)
-    const factor = 1 - (totalPercentRate / 100);
-    const chargeAmount = (netValue + fixedRate) / factor;
+    let chargeAmount = 0;
+    let netReceived = 0;
+    let totalFee = 0;
+
+    if (mode === 'normal') {
+        // Formula: Valor a Cobrar = (Valor Líquido + Taxa Fixa) / (1 - Taxa Percentual / 100)
+        const factor = 1 - (totalPercentRate / 100);
+        chargeAmount = (mainValue + fixedRate) / factor;
+        totalFee = chargeAmount - mainValue;
+        netReceived = mainValue;
+        
+        elPrimaryAmount.textContent = formatCurrency(chargeAmount);
+        elSecondaryAmount.textContent = formatCurrency(netReceived);
+    } else {
+        // Inverso
+        // Formula: Taxa = Valor Cobrado * (Taxa Percentual / 100) + Taxa Fixa
+        chargeAmount = mainValue;
+        totalFee = chargeAmount * (totalPercentRate / 100) + fixedRate;
+        netReceived = chargeAmount - totalFee;
+
+        elPrimaryAmount.textContent = formatCurrency(netReceived);
+        elSecondaryAmount.textContent = formatCurrency(chargeAmount);
+    }
     
-    const totalFee = chargeAmount - netValue;
-    const netReceived = chargeAmount - totalFee;
-    
-    // Update UI
-    elChargeAmount.textContent = formatCurrency(chargeAmount);
     elFeeAmount.textContent = `- ${formatCurrency(totalFee)}`;
     
     let percentText = `${percentRate.toFixed(2).replace('.', ',')}%`;
@@ -164,15 +201,15 @@ function calculate() {
     if (fixedRate > 0) percentText += ' + R$ 1,00';
     
     elFeePercent.textContent = percentText;
-    elNetResult.textContent = formatCurrency(netReceived);
 }
 
 function resetResults() {
-    elChargeAmount.textContent = 'R$ 0,00';
+    elPrimaryAmount.textContent = 'R$ 0,00';
     elFeeAmount.textContent = '- R$ 0,00';
     elFeePercent.textContent = '0%';
-    elNetResult.textContent = 'R$ 0,00';
+    elSecondaryAmount.textContent = 'R$ 0,00';
 }
 
 // Initialize
+updateMode();
 updateFormState();
