@@ -3,30 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AJ Calculator</title>
+    <title>AJ Calculator - Premium</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
 <body>
     <div class="background">
         <div class="blob blob-1"></div>
         <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
     </div>
     
     <main class="container">
         <header>
-            <div style="display: flex; justify-content: center; margin-bottom: 1rem;">
-                <i class="ph-fill ph-calculator" style="font-size: 3rem; color: var(--accent);"></i>
+            <div style="display: flex; justify-content: center; margin-bottom: 1.2rem;">
+                <i class="ph-fill ph-calculator" style="font-size: 3.5rem; color: var(--accent); filter: drop-shadow(0 0 20px var(--accent-glow));"></i>
             </div>
             <h1>AJ Calculator</h1>
             <p>Descubra o valor exato para cobrar do seu cliente.</p>
         </header>
 
         <section class="calculator">
-            <div class="input-group" style="margin-bottom: 0.5rem;">
-                <label for="calc-mode">Tipo de Cálculo</label>
+            <div class="input-group" style="margin-bottom: 0.2rem;">
+                <label for="calc-mode"><i class="ph ph-sliders"></i> Tipo de Cálculo</label>
                 <div class="custom-select">
+                    <i class="ph ph-math-operations input-icon"></i>
                     <select id="calc-mode">
                         <option value="normal">Calcular valor para cobrar (Padrão)</option>
                         <option value="inverse">Calcular valor líquido de uma venda (Inverso)</option>
@@ -35,7 +37,7 @@
             </div>
 
             <div class="input-group">
-                <label for="main-value" id="main-value-label">Valor Líquido Desejado (R$)</label>
+                <label for="main-value" id="main-value-label"><i class="ph ph-currency-circle-dollar"></i> Valor Líquido Desejado</label>
                 <div class="input-wrapper">
                     <span class="currency-symbol">R$</span>
                     <input type="text" id="main-value" placeholder="0,00" inputmode="numeric">
@@ -44,8 +46,9 @@
 
             <div class="row">
                 <div class="input-group">
-                    <label for="platform">Plataforma</label>
+                    <label for="platform"><i class="ph ph-buildings"></i> Plataforma</label>
                     <div class="custom-select">
+                        <i class="ph ph-storefront input-icon"></i>
                         <select id="platform">
                             <option value="payup">Payup</option>
                             <option value="uoppay">UOPPAY</option>
@@ -54,8 +57,9 @@
                 </div>
 
                 <div class="input-group">
-                    <label for="method">Método de Pagamento</label>
+                    <label for="method"><i class="ph ph-wallet"></i> Método</label>
                     <div class="custom-select">
+                        <i class="ph ph-credit-card input-icon"></i>
                         <select id="method">
                             <option value="pix">Pix</option>
                             <option value="credit">Cartão de Crédito</option>
@@ -66,8 +70,9 @@
 
             <div class="row" id="credit-options" style="display: none;">
                 <div class="input-group" id="brand-group">
-                    <label for="brand">Bandeira</label>
+                    <label for="brand"><i class="ph ph-flag-banner"></i> Bandeira</label>
                     <div class="custom-select">
+                        <i class="ph ph-identification-card input-icon"></i>
                         <select id="brand">
                             <option value="visa">Visa</option>
                             <option value="master">Mastercard</option>
@@ -79,8 +84,9 @@
                 </div>
 
                 <div class="input-group">
-                    <label for="installments">Parcelas</label>
+                    <label for="installments"><i class="ph ph-list-numbers"></i> Parcelas</label>
                     <div class="custom-select">
+                        <i class="ph ph-calendar-blank input-icon"></i>
                         <select id="installments">
                             <!-- Options populated by JS -->
                         </select>
@@ -92,15 +98,15 @@
                 <label class="checkbox-label">
                     <input type="checkbox" id="uoppay-fee" checked>
                     <span class="custom-checkbox"></span>
-                    Incluir Tarifa de Processamento (R$ 1,00)
+                    Incluir Tarifa Fixa (R$ 1,00)
                 </label>
             </div>
 
-            <div class="input-group" style="margin-top: 1rem;">
-                <label for="extra-fee">Taxa Extra / Acréscimo (%) - Opcional</label>
+            <div class="input-group" style="margin-top: 0.5rem;">
+                <label for="extra-fee"><i class="ph ph-trend-up"></i> Acréscimo Adicional (%) - Opcional</label>
                 <div class="input-wrapper">
                     <span class="currency-symbol">%</span>
-                    <input type="number" id="extra-fee" placeholder="0" min="0" step="0.01" style="padding-left: 3rem;">
+                    <input type="number" id="extra-fee" placeholder="0" min="0" step="0.01">
                 </div>
             </div>
 

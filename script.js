@@ -73,11 +73,11 @@ function updateMode() {
 function updateFormState() {
     const platform = elPlatform.value;
     const method = elMethod.value;
-    
+
     // Update Methods based on Platform
     const currentMethod = elMethod.value;
     elMethod.innerHTML = '';
-    
+
     if (platform === 'payup') {
         elMethod.add(new Option('Pix', 'pix'));
         elMethod.add(new Option('Cartão de Crédito', 'credit'));
@@ -88,31 +88,31 @@ function updateFormState() {
         elMethod.add(new Option('Cartão de Crédito', 'credit'));
         elUoppayFeeGroup.style.display = 'flex';
     }
-    
+
     // Restore selected method if available
     if (Array.from(elMethod.options).some(opt => opt.value === currentMethod)) {
         elMethod.value = currentMethod;
     } else {
         elMethod.value = 'pix';
     }
-    
+
     // Handle Credit Options visibility
     if (elMethod.value === 'credit') {
         elCreditOptions.style.display = 'flex';
-        
+
         // Brand logic
         if (platform === 'payup') {
             elBrandGroup.style.display = 'flex';
         } else {
             elBrandGroup.style.display = 'none'; // UOPPAY rates are same across brands
         }
-        
+
         // Populate installments
         populateInstallments();
     } else {
         elCreditOptions.style.display = 'none';
     }
-    
+
     calculate();
 }
 
@@ -131,23 +131,23 @@ function populateInstallments() {
 function calculate() {
     const mainValueStr = elMainValue.value;
     const mainValue = getNumericValue(mainValueStr);
-    
+
     if (mainValue === 0) {
         resetResults();
         return;
     }
-    
+
     const platform = elPlatform.value;
     const method = elMethod.value;
     const mode = elCalcMode.value;
-    
+
     let percentRate = 0;
     let fixedRate = 0;
-    
+
     if (platform === 'uoppay' && elUoppayFee.checked) {
         fixedRate = 1.00; // Tarifa de processamento da UOPPAY
     }
-    
+
     if (method === 'pix') {
         percentRate = rates[platform].pix.percent;
     } else if (method === 'boleto') {
@@ -155,7 +155,7 @@ function calculate() {
     } else if (method === 'credit') {
         const installments = parseInt(elInstallments.value, 10);
         const index = installments - 1;
-        
+
         if (platform === 'payup') {
             const brand = elBrand.value;
             percentRate = rates.payup.credit[brand][index];
@@ -163,13 +163,13 @@ function calculate() {
             percentRate = rates.uoppay.credit.all[index];
         }
     }
-    
+
     // Lê a taxa extra opcional
     const extraFeeStr = elExtraFee.value.replace(',', '.');
     const extraFeePercent = parseFloat(extraFeeStr) || 0;
-    
+
     const totalPercentRate = percentRate + extraFeePercent;
-    
+
     let chargeAmount = 0;
     let netReceived = 0;
     let totalFee = 0;
@@ -180,7 +180,7 @@ function calculate() {
         chargeAmount = (mainValue + fixedRate) / factor;
         totalFee = chargeAmount - mainValue;
         netReceived = mainValue;
-        
+
         elPrimaryAmount.textContent = formatCurrency(chargeAmount);
         elSecondaryAmount.textContent = formatCurrency(netReceived);
     } else {
@@ -193,14 +193,22 @@ function calculate() {
         elPrimaryAmount.textContent = formatCurrency(netReceived);
         elSecondaryAmount.textContent = formatCurrency(chargeAmount);
     }
-    
+
     elFeeAmount.textContent = `- ${formatCurrency(totalFee)}`;
-    
+
     let percentText = `${percentRate.toFixed(2).replace('.', ',')}%`;
     if (extraFeePercent > 0) percentText += ` + ${extraFeePercent.toFixed(2).replace('.', ',')}% (Extra)`;
     if (fixedRate > 0) percentText += ' + R$ 1,00';
-    
+
     elFeePercent.textContent = percentText;
+
+    // Dispara a animação de atualização do resultado
+    const primaryCard = document.querySelector('.result-card.primary');
+    if (primaryCard) {
+        primaryCard.classList.remove('result-updated');
+        void primaryCard.offsetWidth; // Força o reflow para reiniciar a animação
+        primaryCard.classList.add('result-updated');
+    }
 }
 
 function resetResults() {
