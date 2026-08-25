@@ -101,11 +101,7 @@ function updateFormState() {
         elCreditOptions.style.display = 'flex';
 
         // Brand logic
-        if (platform === 'payup') {
-            elBrandGroup.style.display = 'flex';
-        } else {
-            elBrandGroup.style.display = 'none'; // UOPPAY rates are same across brands
-        }
+        elBrandGroup.style.display = 'flex';
 
         // Populate installments
         populateInstallments();
@@ -129,6 +125,16 @@ function populateInstallments() {
 }
 
 function calculate() {
+    const platform = elPlatform.value;
+    const method = elMethod.value;
+    const brand = elBrand.value;
+    const mode = elCalcMode.value;
+
+    if (platform === 'uoppay' && method === 'credit' && brand === 'elo') {
+        alert('Atenção: A bandeira Elo está proibida na plataforma UOPPAY.');
+        elBrand.value = 'visa'; // Reverte para uma bandeira permitida
+    }
+
     const mainValueStr = elMainValue.value;
     const mainValue = getNumericValue(mainValueStr);
 
@@ -136,10 +142,6 @@ function calculate() {
         resetResults();
         return;
     }
-
-    const platform = elPlatform.value;
-    const method = elMethod.value;
-    const mode = elCalcMode.value;
 
     let percentRate = 0;
     let fixedRate = 0;
