@@ -20,9 +20,18 @@ const elFeeAmount = document.getElementById('fee-amount');
 const elFeePercent = document.getElementById('fee-percent');
 const elSecondaryTitle = document.getElementById('result-secondary-title');
 const elSecondaryAmount = document.getElementById('result-secondary-amount');
+const elSaleAmount = document.getElementById('sale-amount');
+const elModeRadios = document.querySelectorAll('input[name="mode-ui"]');
 
 // Initialize formatting and listeners
 elCalcMode.addEventListener('change', () => { updateMode(); calculate(); });
+elModeRadios.forEach((radio) => {
+    radio.addEventListener('change', () => {
+        elCalcMode.value = radio.value;
+        updateMode();
+        calculate();
+    });
+});
 elMainValue.addEventListener('input', handleCurrencyInput);
 elPlatform.addEventListener('change', updateFormState);
 elMethod.addEventListener('change', updateFormState);
@@ -58,13 +67,13 @@ function formatCurrency(value) {
 function updateMode() {
     const mode = elCalcMode.value;
     if (mode === 'normal') {
-        elMainValueLabel.textContent = 'Valor Líquido Desejado (R$)';
-        elPrimaryTitle.textContent = 'Valor a Cobrar';
+        elMainValueLabel.textContent = 'Valor líquido desejado';
+        elPrimaryTitle.textContent = 'Valor a cobrar';
         elPrimarySubtitle.textContent = 'Passe este valor para o cliente';
-        elSecondaryTitle.textContent = 'Você Recebe';
+        elSecondaryTitle.textContent = 'Você recebe';
     } else {
-        elMainValueLabel.textContent = 'Valor Cobrado do Cliente (R$)';
-        elPrimaryTitle.textContent = 'Valor Líquido';
+        elMainValueLabel.textContent = 'Valor cobrado do cliente';
+        elPrimaryTitle.textContent = 'Valor líquido';
         elPrimarySubtitle.textContent = 'Valor que cai na sua conta';
         elSecondaryTitle.textContent = 'Valor Cobrado';
     }
@@ -80,13 +89,13 @@ function updateFormState() {
 
     if (platform === 'payup') {
         elMethod.add(new Option('Pix', 'pix'));
-        elMethod.add(new Option('Cartão de Crédito', 'credit'));
-        elUoppayFeeGroup.style.display = 'none';
+        elMethod.add(new Option('Cartão de crédito', 'credit'));
+        elUoppayFeeGroup.hidden = true;
     } else {
         elMethod.add(new Option('Pix', 'pix'));
         elMethod.add(new Option('Boleto', 'boleto'));
-        elMethod.add(new Option('Cartão de Crédito', 'credit'));
-        elUoppayFeeGroup.style.display = 'flex';
+        elMethod.add(new Option('Cartão de crédito', 'credit'));
+        elUoppayFeeGroup.hidden = false;
     }
 
     // Restore selected method if available
@@ -98,15 +107,15 @@ function updateFormState() {
 
     // Handle Credit Options visibility
     if (elMethod.value === 'credit') {
-        elCreditOptions.style.display = 'flex';
+        elCreditOptions.hidden = false;
 
         // Brand logic
-        elBrandGroup.style.display = 'flex';
+        elBrandGroup.hidden = false;
 
         // Populate installments
         populateInstallments();
     } else {
-        elCreditOptions.style.display = 'none';
+        elCreditOptions.hidden = true;
     }
 
     calculate();
@@ -131,7 +140,7 @@ function calculate() {
     const mode = elCalcMode.value;
 
     if (platform === 'uoppay' && method === 'credit' && brand === 'elo') {
-        alert('Atenção: A bandeira Elo está proibida na plataforma UOPPAY.');
+        alert('Atenção: a bandeira Elo não está disponível na plataforma UOPPAY.');
         elBrand.value = 'visa'; // Reverte para uma bandeira permitida
     }
 
@@ -185,6 +194,7 @@ function calculate() {
 
         elPrimaryAmount.textContent = formatCurrency(chargeAmount);
         elSecondaryAmount.textContent = formatCurrency(netReceived);
+        if (elSaleAmount) elSaleAmount.textContent = formatCurrency(chargeAmount);
     } else {
         // Inverso
         // Formula: Taxa = Valor Cobrado * (Taxa Percentual / 100) + Taxa Fixa
@@ -194,6 +204,7 @@ function calculate() {
 
         elPrimaryAmount.textContent = formatCurrency(netReceived);
         elSecondaryAmount.textContent = formatCurrency(chargeAmount);
+        if (elSaleAmount) elSaleAmount.textContent = formatCurrency(chargeAmount);
     }
 
     elFeeAmount.textContent = `- ${formatCurrency(totalFee)}`;
@@ -218,8 +229,10 @@ function resetResults() {
     elFeeAmount.textContent = '- R$ 0,00';
     elFeePercent.textContent = '0%';
     elSecondaryAmount.textContent = 'R$ 0,00';
+    if (elSaleAmount) elSaleAmount.textContent = 'R$ 0,00';
 }
 
 // Initialize
 updateMode();
 updateFormState();
+elMainValue.dispatchEvent(new Event('input'));

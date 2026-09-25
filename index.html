@@ -3,135 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AJ Calculator - Premium</title>
+    <meta name="theme-color" content="#090611">
+    <title>AJ Calculator</title>
+    <script>
+        if (new URLSearchParams(window.location.search).get('view') === 'mobile') {
+            document.documentElement.classList.add('mobile-view');
+        }
+    </script>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="background">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-        <div class="blob blob-3"></div>
-    </div>
-    
-    <main class="container">
-        <header>
-            <div style="display: flex; justify-content: center; margin-bottom: 1.2rem;">
-                <i class="ph-fill ph-calculator" style="font-size: 3.5rem; color: var(--accent); filter: drop-shadow(0 0 20px var(--accent-glow));"></i>
-            </div>
-            <h1>AJ Calculator</h1>
-            <p>Descubra o valor exato para cobrar do seu cliente.</p>
-        </header>
+    <div class="ambient ambient-one"></div>
+    <div class="ambient ambient-two"></div>
 
-        <section class="calculator">
-            <div class="input-group" style="margin-bottom: 0.2rem;">
-                <label for="calc-mode"><i class="ph ph-sliders"></i> Tipo de Cálculo</label>
-                <div class="custom-select">
-                    <i class="ph ph-math-operations input-icon"></i>
-                    <select id="calc-mode">
-                        <option value="normal">Calcular valor para cobrar (Padrão)</option>
-                        <option value="inverse">Calcular valor líquido de uma venda (Inverso)</option>
+    <header class="topbar">
+        <a class="brand" href="#" aria-label="AJ Calculator — início">
+            <span class="brand-mark" aria-hidden="true">AJ</span>
+            <span>Calculator</span>
+        </a>
+        <div class="status"><span></span> Taxas atualizadas</div>
+    </header>
+
+    <main class="page-shell">
+        <section class="intro" aria-labelledby="page-title">
+            <p class="eyebrow">VENDA COM CLAREZA</p>
+            <h1 id="page-title">Saiba quanto cobrar,<br><em>sem perder na taxa.</em></h1>
+            <p class="lead">Calcule o valor ideal para receber exatamente o que precisa — com todas as taxas incluídas.</p>
+        </section>
+
+        <section class="workspace" aria-label="Calculadora de taxas">
+            <form class="calculator-panel" onsubmit="return false;">
+                <div class="panel-heading">
+                    <div>
+                        <span class="step">01</span>
+                        <h2>Configure sua venda</h2>
+                    </div>
+                    <p>Preencha os dados para calcular</p>
+                </div>
+
+                <div class="mode-block">
+                    <span class="field-caption">O que você quer descobrir?</span>
+                    <div class="segmented-control">
+                        <label>
+                            <input type="radio" name="mode-ui" value="normal" checked>
+                            <span>Quanto cobrar</span>
+                        </label>
+                        <label>
+                            <input type="radio" name="mode-ui" value="inverse">
+                            <span>Quanto vou receber</span>
+                        </label>
+                    </div>
+                    <select id="calc-mode" class="sr-only" tabindex="-1" aria-hidden="true">
+                        <option value="normal">Calcular valor para cobrar</option>
+                        <option value="inverse">Calcular valor líquido de uma venda</option>
                     </select>
                 </div>
-            </div>
 
-            <div class="input-group">
-                <label for="main-value" id="main-value-label"><i class="ph ph-currency-circle-dollar"></i> Valor Líquido Desejado</label>
-                <div class="input-wrapper">
-                    <span class="currency-symbol">R$</span>
-                    <input type="text" id="main-value" placeholder="0,00" inputmode="numeric">
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="input-group">
-                    <label for="platform"><i class="ph ph-buildings"></i> Plataforma</label>
-                    <div class="custom-select">
-                        <i class="ph ph-storefront input-icon"></i>
-                        <select id="platform">
-                            <option value="payup">Payup</option>
-                            <option value="uoppay">UOPPAY</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <label for="method"><i class="ph ph-wallet"></i> Método</label>
-                    <div class="custom-select">
-                        <i class="ph ph-credit-card input-icon"></i>
-                        <select id="method">
-                            <option value="pix">Pix</option>
-                            <option value="credit">Cartão de Crédito</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row" id="credit-options" style="display: none;">
-                <div class="input-group" id="brand-group">
-                    <label for="brand"><i class="ph ph-flag-banner"></i> Bandeira</label>
-                    <div class="custom-select">
-                        <i class="ph ph-identification-card input-icon"></i>
-                        <select id="brand">
-                            <option value="visa">Visa</option>
-                            <option value="master">Mastercard</option>
-                            <option value="elo">Elo</option>
-                            <option value="hipercard">Hipercard</option>
-                            <option value="amex">Amex</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <label for="installments"><i class="ph ph-list-numbers"></i> Parcelas</label>
-                    <div class="custom-select">
-                        <i class="ph ph-calendar-blank input-icon"></i>
-                        <select id="installments">
-                            <!-- Options populated by JS -->
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <div class="input-group checkbox-group" id="uoppay-fee-group" style="display: none;">
-                <label class="checkbox-label">
-                    <input type="checkbox" id="uoppay-fee" checked>
-                    <span class="custom-checkbox"></span>
-                    Incluir Tarifa Fixa (R$ 1,00)
+                <label class="field featured-field" for="main-value">
+                    <span id="main-value-label">Valor líquido desejado</span>
+                    <span class="money-input"><b>R$</b><input type="text" id="main-value" value="1.000,00" inputmode="numeric" aria-label="Valor principal"></span>
                 </label>
-            </div>
 
-            <div class="input-group" style="margin-top: 0.5rem;">
-                <label for="extra-fee"><i class="ph ph-trend-up"></i> Acréscimo Adicional (%) - Opcional</label>
-                <div class="input-wrapper">
-                    <span class="currency-symbol">%</span>
-                    <input type="number" id="extra-fee" placeholder="0" min="0" step="0.01">
-                </div>
-            </div>
+                <div class="field-grid">
+                    <label class="field" for="platform">
+                        <span>Plataforma</span>
+                        <span class="select-wrap">
+                            <select id="platform">
+                                <option value="payup">Payup</option>
+                                <option value="uoppay">UOPPAY</option>
+                            </select>
+                        </span>
+                    </label>
 
-            <div class="results">
-                <div class="result-card primary">
-                    <h3 id="result-primary-title">Valor a Cobrar</h3>
-                    <div class="amount" id="result-primary-amount">R$ 0,00</div>
-                    <p class="subtitle" id="result-primary-subtitle">Passe este valor para o cliente</p>
+                    <label class="field" for="method">
+                        <span>Método</span>
+                        <span class="select-wrap">
+                            <select id="method">
+                                <option value="pix">Pix</option>
+                                <option value="credit">Cartão de crédito</option>
+                            </select>
+                        </span>
+                    </label>
                 </div>
-                
-                <div class="result-details">
-                    <div class="detail">
-                        <span>Taxa Descontada (<span id="fee-percent">0%</span>)</span>
-                        <strong class="text-danger" id="fee-amount">- R$ 0,00</strong>
+
+                <div class="field-grid" id="credit-options" hidden>
+                    <label class="field" id="brand-group" for="brand">
+                        <span>Bandeira</span>
+                        <span class="select-wrap">
+                            <select id="brand">
+                                <option value="visa">Visa</option>
+                                <option value="master">Mastercard</option>
+                                <option value="elo">Elo</option>
+                                <option value="hipercard">Hipercard</option>
+                                <option value="amex">Amex</option>
+                            </select>
+                        </span>
+                    </label>
+                    <label class="field" for="installments">
+                        <span>Parcelas</span>
+                        <span class="select-wrap"><select id="installments"></select></span>
+                    </label>
+                </div>
+
+                <label class="check-row" id="uoppay-fee-group" hidden>
+                    <input type="checkbox" id="uoppay-fee" checked>
+                    <span class="custom-check" aria-hidden="true"></span>
+                    Incluir tarifa fixa de R$ 1,00
+                </label>
+
+                <label class="field" for="extra-fee">
+                    <span>Acréscimo adicional <small>opcional</small></span>
+                    <span class="money-input percent-input"><b>%</b><input type="number" id="extra-fee" placeholder="0" min="0" step="0.01"></span>
+                </label>
+            </form>
+
+            <aside class="result-panel" aria-live="polite">
+                <div class="result-topline">
+                    <div>
+                        <span class="step">02</span>
+                        <h2>Seu resultado</h2>
                     </div>
-                    <div class="detail">
-                        <span id="result-secondary-title">Você Recebe</span>
-                        <strong class="text-success" id="result-secondary-amount">R$ 0,00</strong>
+                    <span class="live-badge"><i></i> Calculado</span>
+                </div>
+
+                <div class="result-focus">
+                    <p id="result-primary-title">Valor a cobrar</p>
+                    <strong id="result-primary-amount">R$ 1.019,37</strong>
+                    <span id="result-primary-subtitle">Passe este valor para o cliente</span>
+                </div>
+
+                <div class="result-lines">
+                    <div class="result-line">
+                        <span>Valor da venda</span>
+                        <strong id="sale-amount">R$ 1.019,37</strong>
+                    </div>
+                    <div class="result-line">
+                        <span>Taxas aplicadas <small id="fee-percent">1,90%</small></span>
+                        <strong class="text-danger" id="fee-amount">− R$ 19,37</strong>
+                    </div>
+                    <div class="result-line total-line">
+                        <span id="result-secondary-title">Você recebe</span>
+                        <strong class="text-success" id="result-secondary-amount">R$ 1.000,00</strong>
                     </div>
                 </div>
-            </div>
+
+                <p class="result-note">O valor final já considera a taxa da plataforma e qualquer acréscimo informado.</p>
+            </aside>
         </section>
     </main>
 
+    <footer>AJ Calculator <span>•</span> decisões mais simples para o seu negócio</footer>
+
     <script src="taxas.js"></script>
     <script src="script.js"></script>
+    <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
 </body>
 </html>
