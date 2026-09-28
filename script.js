@@ -87,7 +87,7 @@ function updateFormState() {
     const currentMethod = elMethod.value;
     elMethod.innerHTML = '';
 
-    if (platform === 'payup') {
+    if (platform === 'payup' || platform === 'payup_atitude') {
         elMethod.add(new Option('Pix', 'pix'));
         elMethod.add(new Option('Cartão de crédito', 'credit'));
         elUoppayFeeGroup.hidden = true;
@@ -167,9 +167,9 @@ function calculate() {
         const installments = parseInt(elInstallments.value, 10);
         const index = installments - 1;
 
-        if (platform === 'payup') {
+        if (platform === 'payup' || platform === 'payup_atitude') {
             const brand = elBrand.value;
-            percentRate = rates.payup.credit[brand][index];
+            percentRate = rates[platform].credit[brand][index];
         } else {
             percentRate = rates.uoppay.credit.all[index];
         }
