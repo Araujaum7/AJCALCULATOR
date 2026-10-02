@@ -133,6 +133,60 @@ function populateInstallments() {
     }
 }
 
+function updateInstallmentLabels() {
+    if (elMethod.value !== 'credit') return;
+
+    const platform = elPlatform.value;
+    const brand = elBrand.value;
+    const mode = elCalcMode.value;
+    const mainValueStr = elMainValue.value;
+    const mainValue = getNumericValue(mainValueStr);
+    
+    if (mainValue === 0) {
+        for (let i = 1; i <= 12; i++) {
+            const label = i === 1 ? '1x (À vista)' : `${i}x`;
+            if (elInstallments.options[i-1]) {
+                elInstallments.options[i-1].text = label;
+            }
+        }
+        return;
+    }
+
+    let fixedRate = 0;
+    if (platform === 'uoppay' && elUoppayFee.checked) {
+        fixedRate = 1.00;
+    }
+
+    const extraFeeStr = elExtraFee.value.replace(',', '.');
+    const extraFeePercent = parseFloat(extraFeeStr) || 0;
+
+    for (let i = 1; i <= 12; i++) {
+        if (!elInstallments.options[i-1]) continue;
+        
+        let percentRate = 0;
+        if (platform === 'payup' || platform === 'payup_atitude') {
+            percentRate = rates[platform].credit[brand][i - 1];
+        } else {
+            percentRate = rates.uoppay.credit.all[i - 1];
+        }
+        const totalPercentRate = percentRate + extraFeePercent;
+
+        let chargeAmount = 0;
+        if (mode === 'normal') {
+            const factor = 1 - (totalPercentRate / 100);
+            chargeAmount = (mainValue + fixedRate) / factor;
+        } else {
+            chargeAmount = mainValue;
+        }
+
+        const instValue = chargeAmount / i;
+        const formattedInstValue = formatCurrency(instValue);
+        
+        const labelPrefix = i === 1 ? '1x (À vista)' : `${i}x`;
+        elInstallments.options[i-1].text = `${labelPrefix} de ${formattedInstValue}`;
+    }
+}
+
 function calculate() {
     const platform = elPlatform.value;
     const method = elMethod.value;
@@ -222,6 +276,8 @@ function calculate() {
         void primaryCard.offsetWidth; // Força o reflow para reiniciar a animação
         primaryCard.classList.add('result-updated');
     }
+
+    updateInstallmentLabels();
 }
 
 function resetResults() {
